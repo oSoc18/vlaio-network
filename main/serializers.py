@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import Company, Interaction,Partner,Overlap
+from .models import Company, Interaction,Partner,Overlap, DataFile
 
 
 class CompanySerializer(ModelSerializer):
@@ -41,3 +41,8 @@ class PartnerSerializer(ModelSerializer):
             'id',
             'name'
         )
+
+class DataFileSerializer(ModelSerializer):
+  class Meta():
+    model = DataFile
+    fields = ('file', 'remark', 'timestamp')

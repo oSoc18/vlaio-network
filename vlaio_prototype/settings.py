@@ -131,3 +131,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+MEDIA_URL = '/data-imports/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "data-imports")

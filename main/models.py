@@ -31,3 +31,8 @@ class Interaction(models.Model):
     type = models.CharField(max_length=2, choices=INTERACTION_TYPE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
+
+class DataFile(models.Model):
+  file = models.FileField(blank=False, null=False)
+  remark = models.CharField(max_length=20)
+  timestamp = models.DateTimeField(auto_now_add=True)
