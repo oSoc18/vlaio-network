@@ -45,4 +45,4 @@ class PartnerSerializer(ModelSerializer):
 class DataFileSerializer(ModelSerializer):
   class Meta():
     model = DataFile
-    fields = ('file', 'remark', 'timestamp')
+    fields = ('file', 'timestamp')
