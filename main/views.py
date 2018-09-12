@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Company, Interaction,Partner
-from .serializers import CompanySerializer, InteractionSerializer, PartnerSerializer
+from .models import Company, Interaction,Partner, Overlap
+from .serializers import CompanySerializer, InteractionSerializer, PartnerSerializer, OverlapSerializer
 from rest_framework.generics import ListAPIView
 
 
@@ -22,8 +22,23 @@ class CompanyListView(ListAPIView):
 
 class InteractionListView(ListAPIView):
     serializer_class = InteractionSerializer
-    queryset = Interaction.objects.all()
+
+    def get_queryset(self):
+        interactions = Interaction.objects.all()
+        partner_name = self.request.query_params.get('name', None)
+
+        if partner_name is not None:
+            partner = Partner.objects.get(name=partner_name)
+            interactions = interactions.filter(partner_id=partner.id)
+            # interactions = interactions.filter(partner__name=partner_name.upper())
+        return interactions
+
 
 class PartnerListView(ListAPIView):
     serializer_class = PartnerSerializer
     queryset = Partner.objects.all()
+
+class OverlapListView(ListAPIView):
+    serializer_class = OverlapSerializer
+    queryset = Overlap.objects.all()
+    
