@@ -9,8 +9,8 @@ import django
 # before importing any model
 django.setup()
 
-from . import insert_companies_from_file, get_dataframe
+from . import COMPANY_CONFIG
 
-file_path = "D:\\Downloads\\companies.xlsx"
+file_path = "D:\\Downloads\\wetransfer-470901\\belfirst2.xlsx"
 
-insert_companies_from_file(file_path)
+COMPANY_CONFIG.insert_from_excel(file_path)
