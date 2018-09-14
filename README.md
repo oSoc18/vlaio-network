@@ -22,7 +22,7 @@ This script will:
 - Make and run all Django migrations
 - Insert mock data
 - Print IP where the project is running (windows only). For mac the project will be running on localhost:8000.
-
+ 
 If you want to stop the project run the following command:
 
 ``` docker-compose down ```
