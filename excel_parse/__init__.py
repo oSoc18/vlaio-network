@@ -1,4 +1,7 @@
+from datetime import date
+
 from .vat_normilze import normalize
+
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'vlaio_prototype.settings'
 import django
@@ -6,7 +9,8 @@ import django
 # before importing any model
 django.setup()
 import pandas as pd
-from main.models import Company
+from main.models import Company, Interaction, Partner
+
 
 class Config:
     def __init__(self, xl_to_sql, model_class, xl_types=None, map_df_func=None):
@@ -35,6 +39,7 @@ class Config:
             encoding='sys.getfilesystemencoding()',
             dtype=self.xl_types
         )
+        print(self.df.columns)
         present = set(self.df.columns)
         missing = self.xl_cols - present
         if missing:
@@ -48,16 +53,16 @@ class Config:
 
 
 def map_company_vat(df):
-    VAT_COLUMN = "Ondernemingsnummer"
     df[VAT_COLUMN] = df[VAT_COLUMN].apply(normalize)
     return df
 
 
+VAT_COLUMN = "Ondernemingsnummer"
 COMPANY_CONFIG = Config(
     xl_to_sql={
         # In file name: db column name
         "Naam": "name",
-        "Ondernemingsnummer": "vat",
+        VAT_COLUMN: "vat",
         "Gemiddeld aantal werknemers\n2016": "employees",
         "Winst (Verlies) van het boekjaar na belasting (+/-)\nEUR\n2016": "profit"
     },
@@ -69,4 +74,38 @@ COMPANY_CONFIG = Config(
     },
     model_class=Company,
     map_df_func=map_company_vat
+)
+
+
+def map_df_interactions(df: pd.DataFrame):
+    sources = {
+        name: Partner.objects.get_or_create(name=name)[0]
+        for name in set(df['Source'])
+    }
+    df[SOURCES] = df[SOURCES].apply(lambda x: sources[x].id)
+    # TODO change the date
+    df['date'] = date.today()
+    df["VAT"] = df["VAT"].apply(normalize)
+    df = df[df.VAT.notnull()]
+    return df
+
+
+SOURCES = "Source"
+INTERACTION_CONFIG = Config(
+    xl_to_sql={
+        "Trajectnummer": "id",
+        "VAT": "company_id",
+        SOURCES: 'partner_id',
+        "Type": "type",
+        "Date": "date"
+    },
+    xl_types={
+        "Source": str,
+        "Type": str,
+        "VAT": str,
+        "date": date,
+        "Trajectnummer": str
+    },
+    model_class=Interaction,
+    map_df_func=map_df_interactions
 )

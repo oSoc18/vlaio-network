@@ -9,8 +9,8 @@ import django
 # before importing any model
 django.setup()
 
-from . import COMPANY_CONFIG
+from . import INTERACTION_CONFIG
 
-file_path = "D:\\Downloads\\wetransfer-470901\\belfirst2.xlsx"
+file_path = "D:\\Downloads\\wetransfer-470901\\VLAIO advice.xlsx"
 
-COMPANY_CONFIG.insert_from_excel(file_path)
+INTERACTION_CONFIG.insert_from_excel(file_path)
